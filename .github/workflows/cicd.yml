@@ -85,6 +85,10 @@ jobs:
       - name: Train model
         run: python src/train.py
 
+      - name: Detailed precision / recall report
+        # Bonus 3: confusion matrix + precision/recall tung lop -> outputs/detail.txt
+        run: python src/report.py
+
       - name: Read report
         id: read_report
         run: |
@@ -111,7 +115,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: report
-          path: outputs/report.json
+          path: |
+            outputs/report.json
+            outputs/detail.txt
 
 
   # ---------------------------------------------------------------------------

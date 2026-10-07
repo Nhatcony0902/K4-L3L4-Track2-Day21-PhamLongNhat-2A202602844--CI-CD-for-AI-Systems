@@ -3,6 +3,7 @@ import json
 import numpy as np
 import pandas as pd
 from src.train import train
+from src.report import build_detail_report
 
 
 FEATURE_NAMES = [
@@ -62,6 +63,8 @@ def test_report_file_created(tmp_path):
         report = json.load(f)
     assert "f1_score" in report
     assert "accuracy" in report
+    assert 0.1 <= report["best_threshold"] <= 0.9
+    assert 0.0 <= report["train_positive_rate"] <= 1.0
 
 
 def test_model_file_created(tmp_path):
@@ -74,3 +77,14 @@ def test_model_file_created(tmp_path):
     )
 
     assert os.path.exists("models/model.joblib")
+
+
+def test_detail_report(tmp_path):
+    """Kiem tra bao cao chi tiet (Bonus 3) co confusion matrix va precision/recall."""
+    train_path, eval_path = _make_temp_data(tmp_path)
+    train(SMALL_PARAMS, data_path=train_path, eval_path=eval_path)
+
+    report = build_detail_report(eval_path=eval_path)
+
+    assert "Confusion matrix" in report
+    assert "precision" in report and "recall" in report
