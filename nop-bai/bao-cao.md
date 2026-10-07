@@ -52,3 +52,13 @@ Chỉ 24,8% mẫu thuộc lớp thu nhập > 50K. Một mô hình luôn đoán "
 | Bước 3 (thêm `train_batch2`) | 0.7297 | 0.880 |
 
 **Nhận xét:** Gấp đôi dữ liệu chỉ làm F1 tăng 0,009. Holdout có khoảng 124 mẫu dương, nên đúng thêm vài mẫu đã tạo ra chênh lệch cỡ này. Hai batch cùng phân phối, nên đây không phải bằng chứng rằng thêm dữ liệu luôn tốt hơn. Điều được kiểm chứng là commit dữ liệu tự kích hoạt cả 4 job và VM được cập nhật mô hình mới mà không cần thao tác tay.
+
+---
+
+## 5. Phần Bonus Đã Thực Hiện
+
+Số liệu lấy từ artifact của run #3 (ảnh `06-actions-bonus.png`), huấn luyện trên 44.722 mẫu.
+
+- [x] Bonus 2 - Điều chỉnh ngưỡng quyết định: ngưỡng tối ưu là **0.30**, cho F1 = 0.7452, so với 0.7297 ở ngưỡng 0.5. Hạ ngưỡng giúp bắt thêm người thu nhập cao vì lớp dương chiếm thiểu số. Giá trị được ghi vào `report.json` và MLflow.
+- [x] Bonus 3 - Báo cáo precision / recall tự động (`src/report.py` → `outputs/detail.txt`): lớp 1 có precision 0.83 và recall 0.65, tức mô hình bỏ sót 43/124 người thu nhập cao nhưng chỉ gán nhầm 17/376 người. Nếu mục đích là tìm khách hàng thu nhập cao, bỏ sót (recall thấp) tốn kém hơn vì mất cơ hội thật, còn gán nhầm chỉ tốn một lần tiếp cận.
+- [x] Bonus 5 - Cảnh báo lệch lạc dữ liệu: tỷ lệ lớp dương trong tập train là 24.8%, nằm trong ngưỡng ±5 điểm %. Nếu lệch quá ngưỡng, pipeline in `::warning::` lên trang run. Giá trị được ghi vào `report.json`.
